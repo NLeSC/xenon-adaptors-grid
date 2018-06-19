@@ -1,0 +1,54 @@
+plugins {
+    // ide
+    id 'java'
+    id 'idea'
+    id 'eclipse'
+    // publishing
+    id 'com.jfrog.bintray' version '1.8.0' apply false
+    // code style
+    id 'com.diffplug.gradle.spotless' version '3.8.0' 
+    // license
+    id 'com.github.hierynomus.license' version '0.14.0' 
+    id 'org.unbroken-dome.test-sets' version '1.4.2'
+    id 'com.github.johnrengelman.shadow' version '2.0.4'
+}
+
+description = 'Cloud adaptors for Xenon.'
+
+apply from: 'gradle/common.gradle'
+apply from: 'gradle/adaptor.gradle'
+
+dependencies {
+    // Adaptor dependencies.
+    compile group: 'nl.esciencecenter.xenon', name: 'xenon', version: '3.0.0'
+
+    // JGlobus (for gridftp)
+    compile group: 'org.jglobus', name: 'gridftp', version: '2.1.0'
+
+    // Runtime dependencies
+    shadow group: 'ch.qos.logback', name: 'logback-core', version: '1.0.11'
+    shadow group: 'ch.qos.logback', name: 'logback-classic', version: '1.0.11'
+
+//    liveTestCompile project(':test-utils')
+//    liveTestCompile group: 'junit', name: 'junit', version: '4.12'
+}
+
+ext.shadowPrefix = project.name.replaceAll('-', '_') + '.shadow.'
+
+shadowJar {
+   mergeServiceFiles()
+   classifier = null
+//   relocate 'org.jclouds', shadowPrefix + 'org.jclouds'
+//   relocate 'com.google', shadowPrefix + 'com.google'
+//  relocate 'org.objectweb.asm', shadowPrefix + 'org.objectweb.asm'
+//   relocate 'com.jamesmurty', shadowPrefix + 'com.jamesmurty'
+//   relocate 'net.iharder', shadowPrefix + 'net.iharder'
+//   relocate 'org.aopalliance', shadowPrefix + 'org.aopalliance'
+//   relocate 'net.sf.cglib', shadowPrefix + 'net.sf.cglib'
+//   relocate 'javax', shadowPrefix + 'javax'
+
+   dependencies {
+      exclude(dependency('nl.esciencecenter.xenon:xenon-core:3.0.0'))
+      exclude(dependency('org.slf4j::.*'))
+   }
+}
